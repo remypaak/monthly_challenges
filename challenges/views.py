@@ -27,19 +27,17 @@ class MonthlyChallenges(BetterEnum):
 def index(request: HttpRequest) -> HttpResponse:
     html_list_item = ''
     for month in MonthlyChallenges:
-        html_list_item += f'<li><a href="{reverse("monthly-challenge", args=[month.name])}">{month.name.capitalize()}</a></li>'
+        html_list_item += (
+            f'<li><a href="{reverse("monthly-challenge", args=[month.name])}">{month.name.capitalize()}</a></li>'
+        )
     return HttpResponse(f'<ul>{html_list_item}</ul>')
 
 
 def monthly_challenge_by_number(request: HttpRequest, month: int):
     for index, member in enumerate(MonthlyChallenges):
         if index == (month - 1):
-            return HttpResponseRedirect(
-                reverse("monthly-challenge", args=[member.name])
-            )
-    return HttpResponseNotFound(
-        "<h1>No month is represented by that number</h1>"
-    )
+            return HttpResponseRedirect(reverse("monthly-challenge", args=[member.name]))
+    return HttpResponseNotFound("<h1>No month is represented by that number</h1>")
 
 
 def monthly_challenges(request: HttpRequest, month: str) -> HttpResponse:
