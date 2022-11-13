@@ -7,6 +7,7 @@ from django.http import (
     HttpResponseRedirect,
 )
 from django.urls import reverse
+from django.template.loader import render_to_string
 
 
 class MonthlyChallenges(BetterEnum):
@@ -21,16 +22,15 @@ class MonthlyChallenges(BetterEnum):
     september = 'No meat month'
     october = 'Stoptober'
     november = 'No nut November'
-    december = 'Cheat month'
+    december = None
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    html_list_item = ''
-    for month in MonthlyChallenges:
-        html_list_item += (
-            f'<li><a href="{reverse("monthly-challenge", args=[month.name])}">{month.name.capitalize()}</a></li>'
-        )
-    return HttpResponse(f'<ul>{html_list_item}</ul>')
+    month_names = [month.name for month in MonthlyChallenges]
+    return render(request, 'challenges/index.html', {
+        'month_names': month_names
+    })
+
 
 
 def monthly_challenge_by_number(request: HttpRequest, month: int):
@@ -42,7 +42,10 @@ def monthly_challenge_by_number(request: HttpRequest, month: int):
 
 def monthly_challenges(request: HttpRequest, month: str) -> HttpResponse:
     try:
-        challenge_text = f'<h1>{MonthlyChallenges.from_name(month).value}</h1>'
-        return HttpResponse(challenge_text)
+        return render(request, 'challenges/challenge.html', {
+            'challenge_of_the_month': MonthlyChallenges.from_name(month).value,
+            'month_name': month
+                                                             })
     except ValueError:
         return HttpResponseNotFound("<h1>No month with that name exists</h1>")
+
