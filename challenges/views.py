@@ -5,6 +5,7 @@ from django.http import (
     HttpResponse,
     HttpResponseNotFound,
     HttpResponseRedirect,
+    Http404
 )
 from django.urls import reverse
 from django.template.loader import render_to_string
@@ -47,5 +48,5 @@ def monthly_challenges(request: HttpRequest, month: str) -> HttpResponse:
             'month_name': month
                                                              })
     except ValueError:
-        return HttpResponseNotFound("<h1>No month with that name exists</h1>")
+        raise Http404()
 
